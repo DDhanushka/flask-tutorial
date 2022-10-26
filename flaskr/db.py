@@ -1,4 +1,5 @@
 import sqlite3
+from tkinter import W
 
 import click
 from flask import current_app, g
@@ -18,3 +19,15 @@ def close_db(e=None):
 
     if db is not None:
         db.close()
+
+def init_db():
+    db = get_db():
+    
+    with current_app.open_resource('schema.sql') as f:
+        db.executescript(f.read().decode('utf-8'))
+
+@click.command('init-db')
+def init_db_command():
+    """clear existing data nad create new tables"""
+    init_db()
+    click.echo('Initialied the DB')
